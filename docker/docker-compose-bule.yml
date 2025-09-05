@@ -1,0 +1,25 @@
+# Blue 환경용 앱 컨테이너 Compose 파일
+services:
+  app-blue:
+    image: imjuyongp/sbs:latest
+    container_name: sbs-app-blue
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${PROFILE:-dev}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
+    command: [ "java", "-jar", "app.jar" ]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - sbs-network
+    restart: unless-stopped
+
+networks:
+  sbs-network:
+    external: false

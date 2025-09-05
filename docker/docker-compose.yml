@@ -1,0 +1,62 @@
+# 공용 Compose 파일 (Blue/Green 앱 컨테이너와 관계없는 공용 서비스)
+# DB, Redis, Qdrant, Dozzle 등 공용으로 사용되는 stateful service 정의
+services:
+  mysql:
+    image: mysql:8.0
+    expose:
+      - "3306"
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - sbs-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: redis:7.2-alpine
+    expose:
+      - "6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASS}
+    command: [ "redis-server", "--requirepass", "${REDIS_PASS}" ]
+    volumes:
+      - redis-data:/data
+    networks:
+      - sbs-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASS}", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  dozzle:
+    image: amir20/dozzle:latest
+    ports:
+      - "9999:8080"
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - sbs-network
+    restart: unless-stopped
+
+networks:
+  sbs-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
