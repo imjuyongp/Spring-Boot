@@ -50,7 +50,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ec2-user/actions-runner/_work/Spring-Boot/Spring-Boot/docker
+            cd /home/ubuntu/actions-runner/_work/Spring-Boot/Spring-Boot/docker
             echo "$ENV" > ./.env
             echo "PROFILE=dev" >> ./.env 
 
