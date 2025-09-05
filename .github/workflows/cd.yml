@@ -78,4 +78,4 @@ jobs:
 
               echo "Stopping previous $PREV_COLOR app container"
               docker compose -f docker-compose.yml -f docker-compose-${PREV_COLOR}.yml stop app-${PREV_COLOR} || true
-            fi
+            
