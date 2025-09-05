@@ -42,7 +42,7 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           PROFILE: ${{ needs.build.outputs.profile }}
-          ENV_DEV: ${{ secrets.ENV }}
+          ENV: ${{ secrets.ENV }}
         with:
           envs: PROFILE,ENV
           host: ${{ secrets.SSH_HOST }}
@@ -76,6 +76,5 @@ jobs:
             docker compose -f docker-compose.yml -f docker-compose-${COLOR}.yml pull
             docker compose -f docker-compose.yml -f docker-compose-${COLOR}.yml up -d --build
 
-              echo "Stopping previous $PREV_COLOR app container"
-              docker compose -f docker-compose.yml -f docker-compose-${PREV_COLOR}.yml stop app-${PREV_COLOR} || true
-            
+            echo "Stopping previous $PREV_COLOR app container"
+            docker compose -f docker-compose.yml -f docker-compose-${PREV_COLOR}.yml stop app-${PREV_COLOR} || true
