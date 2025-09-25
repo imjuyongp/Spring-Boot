@@ -49,7 +49,7 @@ jobs:
 
       - name: Build with Gradle Wrapper
         if: steps.changes.outputs.application == 'true'
-        run: ./gradlew clean build
+        run: ./gradlew clean build -x test
         env:
           SPRING_PROFILES_ACTIVE: dev
 

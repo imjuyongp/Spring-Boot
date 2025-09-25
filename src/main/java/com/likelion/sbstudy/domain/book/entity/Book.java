@@ -51,9 +51,12 @@ public class Book extends BaseTimeEntity {
   private List<Category> categoryList;
 
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
   private List<BookImage> bookImages = new ArrayList<>();
 
   public void addBookImages(List<BookImage> bookImages) {
-    this.bookImages = bookImages;
+    if(bookImages != null) { // bookImage가 null이 아닐때만 처리하도록 수정
+      this.bookImages = bookImages;
+    }
   }
 }

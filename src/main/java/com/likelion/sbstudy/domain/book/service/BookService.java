@@ -10,6 +10,8 @@ import com.likelion.sbstudy.global.exception.CustomException;
 import com.likelion.sbstudy.global.s3.entity.PathName;
 import com.likelion.sbstudy.global.s3.service.S3Service;
 import jakarta.transaction.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,16 +42,20 @@ public class BookService {
         .releaseDate(request.getReleaseDate())
         .build();
 
-    List<BookImage> bookImages = images.stream()
-        .filter(image -> !image.isEmpty())
-        .map(image -> {
-          String imageUrl = s3Service.uploadFile(PathName.FOLDER1, image);
-          return BookImage.builder()
-              .imageUrl(imageUrl)
-              .book(book)
-              .build();
-        })
-        .toList();
+    // images가 null이 아닐 때만 이미지 처리
+    List<BookImage> bookImages = new ArrayList<>();
+    if (images != null && !images.isEmpty()) {
+      bookImages = images.stream()
+          .filter(image -> !image.isEmpty())
+          .map(image -> {
+            String imageUrl = s3Service.uploadFile(PathName.FOLDER1, image);
+            return BookImage.builder()
+                .imageUrl(imageUrl)
+                .book(book)
+                .build();
+          })
+          .toList();
+    }
 
     book.addBookImages(bookImages);
 
