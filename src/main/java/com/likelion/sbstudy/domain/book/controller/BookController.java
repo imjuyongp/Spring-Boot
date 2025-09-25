@@ -47,7 +47,7 @@ public class BookController {
       @RequestPart(value = "book") @Valid CreateBookRequest request,
       @Parameter(description = "책 이미지들",
           content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
-      @RequestPart(value = "images")
+      @RequestPart(value = "images", required = false)
       List<MultipartFile> images) {
     BookResponse response = bookService.createBook(request, images);
     return ResponseEntity.ok(BaseResponse.success("책 생성에 성공하였습니다.", response));
