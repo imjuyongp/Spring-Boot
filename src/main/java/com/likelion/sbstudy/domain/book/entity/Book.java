@@ -1,14 +1,8 @@
 package com.likelion.sbstudy.domain.book.entity;
 
 import com.likelion.sbstudy.global.common.BaseTimeEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -47,16 +41,30 @@ public class Book extends BaseTimeEntity {
   @Column(name = "release_date", nullable = false)
   private String releaseDate;
 
-  @Column(name = "category_list", nullable = false)
-  private List<Category> categoryList;
+  @ElementCollection(fetch = FetchType.LAZY)
+  @Enumerated(EnumType.STRING)
+  @CollectionTable(name = "book_category", joinColumns = @JoinColumn(name = "book_id"))
+  @Column(name = "category")
+  @Builder.Default
+  private List<Category> categoryList = new ArrayList<>();
 
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-  @Builder.Default
-  private List<BookImage> bookImages = new ArrayList<>();
+  private List<BookImage> bookImageList;
 
-  public void addBookImages(List<BookImage> bookImages) {
-    if(bookImages != null) { // bookImage가 null이 아닐때만 처리하도록 수정
-      this.bookImages = bookImages;
-    }
+  public void addBookImageList(List<BookImage> bookImageList) {
+    this.bookImageList = bookImageList;
+  }
+
+  public void addCategoryList(List<Category> categoryList) {
+    this.categoryList = categoryList;
+  }
+
+  public void update(Book book) {
+    this.title = book.getTitle();
+    this.author = book.getAuthor();
+    this.publisher = book.getPublisher();
+    this.price = book.getPrice();
+    this.description = book.getDescription();
+    this.releaseDate = book.getReleaseDate();
   }
 }

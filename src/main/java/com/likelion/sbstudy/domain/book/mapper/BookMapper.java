@@ -19,9 +19,11 @@ public class BookMapper {
         .releaseDate(book.getReleaseDate())
         .categoryList(book.getCategoryList())
         .bookImagesUrl(
-            book.getBookImages().stream()
+            book.getBookImageList() != null ?
+            book.getBookImageList().stream()
                 .map(BookImage::getImageUrl)
-                .toList()
+                .toList() :
+            java.util.Collections.emptyList()
         )
         .build();
   }
